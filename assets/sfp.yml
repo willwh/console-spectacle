@@ -1,0 +1,21 @@
+command:
+  name: sfp:init
+  description: 'Config stage_file_proxy'
+commands:
+# Install stage_file_proxy
+  - command: module:install
+    arguments:
+      module:
+        - stage_file_proxy
+# Configure stage_file_proxy
+  - command: 'config:override'
+    arguments:
+      name: stage_file_proxy.settings
+      key: hotlink
+      value: '%{{hotlink|1}}'
+  - command: 'config:override'
+    arguments:
+      name: stage_file_proxy.settings
+      key: origin
+      value: '%{{host_name|https://northstudio.com}}'
+

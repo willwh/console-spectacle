@@ -1,0 +1,62 @@
+command:
+  name: dev:init
+  description: 'Dev setup for D8'
+commands:
+# Require dev modules
+  - command: exec
+    arguments:
+      bin: composer require drupal/devel drupal/stage_file_proxy drupal/features_ui
+    options:
+      working-directory: ../
+# Install development modules
+  - command: module:install
+    arguments:
+      module:
+        - features_ui
+        - devel
+        - stage_file_proxy
+# Install theme dependencies
+  - command: exec
+    arguments:
+      bin: npm install
+    options:
+      working-directory: themes/test
+# Run some Grunt command
+  - command: exec
+    arguments:
+      bin: grunt
+    options:
+      working-directory: themes/test
+# Configure stage_file_proxy
+  - command: 'config:override'
+      arguments:
+        name: stage_file_proxy.settings
+        key: hotlink
+        value: '1'
+  - command: 'config:override'
+      arguments:
+        name: stage_file_proxy.settings
+        key: origin
+        value: 'https://northstudio.com'
+# Create dummy data
+  - command: 'create:terms'
+    options:
+      limit: '20'
+      name-words: '3'
+    arguments:
+      vocabularies:
+        - blog_categories
+  - command: 'create:nodes'
+    options:
+      limit: 50
+      title-words: 5
+      time-range: 2592000
+    arguments:
+      content-types:
+        - blog
+# Cache clear just to make sure config import was done ok.
+  - command: 'cache:rebuild'
+    options:
+      uri: 'http://default'
+    arguments:
+      cache: all
